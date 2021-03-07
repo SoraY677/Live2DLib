@@ -1,0 +1,29 @@
+{
+  "name": "hackday2021_live2dlib",
+  "version": "1.0.0",
+  "description": "HackDay2020で使用するLive2Dの簡単導入ライブラリ",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx webpack",
+    "dev": "npx webpack --watch",
+    "serve": "npx webpack serve --hot --inline --watch-content-base"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SoraY677/HackDay2021_Live2DLib.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SoraY677/HackDay2021_Live2DLib/issues"
+  },
+  "homepage": "https://github.com/SoraY677/HackDay2021_Live2DLib#readme",
+  "dependencies": {
+    "webpack": "^5.24.3",
+    "webpack-dev-server": "^3.11.2"
+  },
+  "devDependencies": {
+    "webpack-cli": "^4.5.0"
+  }
+}
