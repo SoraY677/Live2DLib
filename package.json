@@ -20,6 +20,8 @@
   },
   "homepage": "https://github.com/SoraY677/HackDay2021_Live2DLib#readme",
   "dependencies": {
+    "css-loader": "^5.1.1",
+    "style-loader": "^2.0.0",
     "webpack": "^5.24.3",
     "webpack-dev-server": "^3.11.2"
   },

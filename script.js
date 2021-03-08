@@ -1,7 +1,14 @@
+import "./style.css";
+
 import {
-	Enter
-} from './OriginalLib/Enter'
+	Manager
+} from './OriginalLib/Manager'
 
 const canvas = document.getElementById('model_canvas')
+const modelSetting = {
+	'modelRootDir': '../Model/Hiyori/',
+	'modelJson': 'Hiyori.model3.json',
+	'modelMoc': 'Hiyori.moc3'
+}
 
-const enter = new Enter(canvas)
+const enter = new Manager(canvas, modelSetting)

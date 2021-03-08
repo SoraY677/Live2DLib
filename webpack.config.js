@@ -13,4 +13,18 @@ module.exports = {
 		// 出力先のパス（絶対パスを指定する必要がある）
 		path: path.join(__dirname, 'dist')
 	},
+	module: {
+		rules: [{
+			test: /\.css/,
+			use: [
+				"style-loader",
+				{
+					loader: "css-loader",
+					options: {
+						url: false
+					}
+				}
+			]
+		}]
+	}
 };
