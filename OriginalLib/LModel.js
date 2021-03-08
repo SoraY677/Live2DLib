@@ -24,27 +24,26 @@ import {
 	gl,
 	frameBuffer,
 	canvas
-} from "./Enter"
+} from "./Manager"
 
 import {
 	renderer
-} from "./Renderer"
+} from "./LRenderer"
 
 import {
 	LModelAction
-} from "./ModelAction"
+} from "./LModelAction"
 
 
-
-export class Model extends CubismUserModel {
+export class LModel extends CubismUserModel {
 
 	/**
 	 * 初期化
 	 * @param {String} dirpath 
+	 * @param {String} jsonFN jsonファイル名
+	 * @param {String} mocFN mocファイル名
 	 */
-	constructor(dirpath, jsonFN, mocFN) {
-		super()
-
+	initialize(dirpath, jsonFN, mocFN) {
 		this._modelAction = new LModelAction()
 
 		this._dirpath = dirpath
@@ -67,7 +66,7 @@ export class Model extends CubismUserModel {
 
 	/**
 	 * Frameworkを使った.model3.jsonファイルからの読み込み
-	 * @param {String} path
+	 * @param {String} filepath
 	 */
 	loadAssets(filename) {
 		return new Promise((resolve, reject) => {
@@ -95,6 +94,10 @@ export class Model extends CubismUserModel {
 		})
 	}
 
+	/**
+	 * モーションファイルを読み込み
+	 * @returns {Promise} 読み込み成功/失敗 => true/false
+	 */
 	loadMotionFile() {
 		return new Promise((resolve, reject) => {
 			const groupCount = this._modelSetting.getMotionGroupCount()
@@ -114,6 +117,7 @@ export class Model extends CubismUserModel {
 							this._modelAction._motionList.push(CubismMotion.create(buffer, size))
 							resolve(true)
 						})
+						.catch(() => reject(false))
 				}
 			}
 		})
@@ -121,6 +125,7 @@ export class Model extends CubismUserModel {
 
 	/**
 	 * 読み込んだmodel3.jsonからモデル読み込みを実行
+	 * @returns {Promise} 読み込み成功/失敗 => true/false
 	 */
 	setupModel() {
 		return new Promise((resolve, reject) => {
@@ -148,6 +153,7 @@ export class Model extends CubismUserModel {
 
 	/**
 	 * テクスチャの用意
+	 * @returns {Promise} 
 	 */
 	setupTextures() {
 		return new Promise((resolve, reject) => {
@@ -218,13 +224,14 @@ export class Model extends CubismUserModel {
 				this._model.getCanvasHeight());
 
 		const projectionMatrix = new CubismMatrix44();
-		projectionMatrix.scale(1, 1.7);
-		projectionMatrix.translateRelative(0, -2)
-		projectionMatrix.scaleRelative(6, 6);
+		projectionMatrix.scale(1, 1);
+		projectionMatrix.translateRelative(0, -1.3)
+		projectionMatrix.scaleRelative(3, 3);
 		projectionMatrix.multiplyByMatrix(modelMatrix);
 
 		// キャンバスサイズを渡す
-		const viewport = [0, 0, canvas.width, canvas.height];
+		const viewportSize = canvas.width < canvas.height ? canvas.width : canvas.height
+		const viewport = [0, 0, viewportSize, viewportSize] //canvas.width, canvas.height];
 		this.getRenderer().setRenderState(frameBuffer, viewport);
 		this.getRenderer().setMvpMatrix(projectionMatrix);
 		this.getRenderer().drawModel();

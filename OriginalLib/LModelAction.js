@@ -27,7 +27,7 @@ const CubismDefaultParameterId = cubismdefaultparameterid;
 
 
 import {
-	Common as LCommon
+	Common
 } from "./Common"
 
 export class LModelAction {
@@ -115,7 +115,7 @@ export class LModelAction {
 
 
 	update(model) {
-		const deltaTimeSeconds = LCommon.getDeltaTime();
+		const deltaTimeSeconds = Common.getDeltaTime();
 		// 瞬き
 		if (this._eyeBlink != null) {
 			// メインモーションの更新がないとき
