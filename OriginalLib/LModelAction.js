@@ -5,6 +5,9 @@ import {
 	Live2DCubismFramework as csmvector
 } from '../Live2D/Framework/type/csmvector';
 import {
+	Live2DCubismFramework as cubismusermodel
+} from '../Live2D/Framework/model/cubismusermodel';
+import {
 	Live2DCubismFramework as cubismeyeblink
 } from '../Live2D/Framework/effect/cubismeyeblink';
 import {
@@ -24,15 +27,17 @@ const CubismBreath = cubismbreath.CubismBreath;
 const BreathParameterData = cubismbreath.BreathParameterData;
 const CubismMotionManager = cubismmotionmanager.CubismMotionManager
 const CubismDefaultParameterId = cubismdefaultparameterid;
+const CubismUserModel = cubismusermodel.CubismUserModel;
 
 
 import {
 	Common
 } from "./Common"
 
-export class LModelAction {
+export class LModelAction extends CubismUserModel {
 
 	constructor() {
+		super()
 		this._eyeBlinkIds = new csmVector()
 		this._lipSyncIds = new csmVector()
 		this._motionList = []
@@ -45,7 +50,7 @@ export class LModelAction {
 		//腕Bを消す前処理
 		model._model.setPartOpacityById(CubismFramework.getIdManager().getId("PartArmB"), 0.0);
 		this.setupEyeBlink(model) // 瞬き
-		this.setupLipSync // リップシンク
+		this.setupLipSync(model) // リップシンク
 		this.setupBreath(model) //呼吸
 		this.setupMotion(model)
 
@@ -62,10 +67,10 @@ export class LModelAction {
 	};
 
 	setupLipSync(model) {
-		const lipSyncIdCount = this._modelSetting.getLipSyncParameterCount();
+		const lipSyncIdCount = model._modelSetting.getLipSyncParameterCount();
 
 		for (let i = 0; i < lipSyncIdCount; ++i) {
-			this._lipSyncIds.pushBack(this._modelSetting.getLipSyncParameterId(i));
+			this._lipSyncIds.pushBack(model._modelSetting.getLipSyncParameterId(i));
 		}
 
 	}
@@ -113,6 +118,16 @@ export class LModelAction {
 	}
 
 
+	/**
+	 * 文字どおりの口パクを起動する
+	 * @param {String} text 読ませる文字
+	 */
+	fireLipSync(model, text) {
+		let value = 0.3; // リアルタイムでリップシンクを行う場合、システムから音量を取得して、0~1の範囲で値を入力します。
+		for (let i = 0; i < this._lipSyncIds.getSize(); ++i) {
+			model.addParameterValueById(this._lipSyncIds.at(i), value, 0.8);
+		}
+	}
 
 	update(model) {
 		const deltaTimeSeconds = Common.getDeltaTime();
@@ -126,15 +141,19 @@ export class LModelAction {
 			this._breath.updateParameters(model, deltaTimeSeconds);
 		}
 
+		if (this._lipsync) {
+			let value = 0;
+			for (let i = 0; i < this._lipSyncIds.getSize(); ++i) {
+				model.addParameterValueById(this._lipSyncIds.at(i), value, 0.8);
+			}
+		}
+
 		if (this._pose != null) {
 			this._pose.updateParameters(model, deltaTimeSeconds)
 		}
 		if (!this._motionManager.isFinished()) {
 			this._motionManager.updateMotion(model, deltaTimeSeconds);
 		}
+
 	}
-}
-
-class ModelAction {
-
 }

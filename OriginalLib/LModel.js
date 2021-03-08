@@ -245,4 +245,8 @@ export class LModel extends CubismUserModel {
 		this._model.update()
 		this.draw()
 	}
+
+	fireLipSync(text) {
+		this._modelAction.fireLipSync(this._model, text)
+	}
 }
