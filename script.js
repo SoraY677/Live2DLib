@@ -1,4 +1,7 @@
-import Enter from './OriginalLib/Enter'
+import {
+	Enter
+} from './OriginalLib/Enter'
 
-console.log('doge')
-// const enter = new Enter()
+const canvas = document.getElementById('model_canvas')
+
+const enter = new Enter(canvas)
