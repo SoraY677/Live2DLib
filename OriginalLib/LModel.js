@@ -241,7 +241,7 @@ export class LModel extends CubismUserModel {
 	 * 更新処理
 	 */
 	update() {
-		this._modelAction.update(this._model)
+		this._modelAction.update(this)
 		this._model.update()
 		this.draw()
 	}

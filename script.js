@@ -13,6 +13,6 @@ const modelSetting = {
 
 const enter = new Manager(canvas, modelSetting)
 
-setTimeout(() => {
-	enter.fireLipSync('hoge')
-}, 3000);
+// setTimeout(() => {
+// 	enter.fireLipSync('hoge')
+// }, 3000);

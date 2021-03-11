@@ -42,6 +42,8 @@ export class LModelAction extends CubismUserModel {
 		this._lipSyncIds = new csmVector()
 		this._motionList = []
 		this._motionManager = new CubismMotionManager()
+		this.value = 0;
+		this.increment = -0.1
 	}
 	/**
 	 * セットアップ系の統括
@@ -123,29 +125,56 @@ export class LModelAction extends CubismUserModel {
 	 * @param {String} text 読ませる文字
 	 */
 	fireLipSync(model, text) {
-		let value = 0.3; // リアルタイムでリップシンクを行う場合、システムから音量を取得して、0~1の範囲で値を入力します。
-		for (let i = 0; i < this._lipSyncIds.getSize(); ++i) {
-			model.addParameterValueById(this._lipSyncIds.at(i), value, 0.8);
-		}
+		setInterval(() => {
+			if (this.value < 0) {
+				this.value = 0;
+				this.increment *= -1
+			} else if (this.value > 1) {
+				this.value = 1;
+				this.increment *= -1
+			}
+
+			console.log(this.value)
+			for (let i = 0; i < this._lipSyncIds.getSize(); ++i) {
+				model._model.addParameterValueById(this._lipSyncIds.at(i), 0, 0.8);
+			}
+			this.value += this.increment
+		}, 50);
 	}
 
+
+	/**
+	 * モデルを更新
+	 * @param {} model 
+	 */
 	update(model) {
+		model._model.loadParameters();
 		const deltaTimeSeconds = Common.getDeltaTime();
 		// 瞬き
 		if (this._eyeBlink != null) {
 			// メインモーションの更新がないとき
-			this._eyeBlink.updateParameters(model, deltaTimeSeconds);
+			this._eyeBlink.updateParameters(model._model, deltaTimeSeconds);
 		}
 		// 呼吸など
 		if (this._breath != null) {
-			this._breath.updateParameters(model, deltaTimeSeconds);
+			this._breath.updateParameters(model._model, deltaTimeSeconds);
 		}
 
 		if (this._lipsync) {
-			let value = 0;
-			for (let i = 0; i < this._lipSyncIds.getSize(); ++i) {
-				model.addParameterValueById(this._lipSyncIds.at(i), value, 0.8);
+
+			if (this.value < 0.1) {
+				this.value = 0.0;
+				this.increment *= -1.0
+			} else if (this.value >= 1) {
+				this.value = 1.0;
+				this.increment *= -1.0
 			}
+
+			for (let i = 0; i < model._modelSetting.getLipSyncParameterCount(); ++i) {
+				model._model.setParameterValueById(model._modelSetting.getLipSyncParameterId(i), this.value, this.value);
+			}
+			this.value += this.increment
+			console.log(this.value)
 		}
 
 		if (this._pose != null) {
@@ -154,6 +183,7 @@ export class LModelAction extends CubismUserModel {
 		if (!this._motionManager.isFinished()) {
 			this._motionManager.updateMotion(model, deltaTimeSeconds);
 		}
+		model._model.saveParameters();
 
 	}
 }
