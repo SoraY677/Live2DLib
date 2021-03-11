@@ -98,10 +98,8 @@ export class Manager {
 		loop();
 	}
 
-	/**
-	 * リップシンクを発動
-	 */
-	fireLipSync(text) {
-		this._model.fireLipSync(text)
+	switchLipSync() {
+		this._model.switchLipSync()
 	}
+
 }

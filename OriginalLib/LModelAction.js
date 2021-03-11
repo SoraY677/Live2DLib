@@ -44,6 +44,8 @@ export class LModelAction extends CubismUserModel {
 		this._motionManager = new CubismMotionManager()
 		this.value = 0;
 		this.increment = -0.1
+		this.lipSyncInterval = 1;
+		this.lipSyncFlag = false;
 	}
 	/**
 	 * セットアップ系の統括
@@ -119,28 +121,14 @@ export class LModelAction extends CubismUserModel {
 		this._motionManager.startMotionPriority(this._motionList[index], autoDelete, priority);
 	}
 
-
 	/**
-	 * 文字どおりの口パクを起動する
-	 * @param {String} text 読ませる文字
+	 * リップシンクをtrue/falseを切り替える
 	 */
-	fireLipSync(model, text) {
-		setInterval(() => {
-			if (this.value < 0) {
-				this.value = 0;
-				this.increment *= -1
-			} else if (this.value > 1) {
-				this.value = 1;
-				this.increment *= -1
-			}
-
-			console.log(this.value)
-			for (let i = 0; i < this._lipSyncIds.getSize(); ++i) {
-				model._model.addParameterValueById(this._lipSyncIds.at(i), 0, 0.8);
-			}
-			this.value += this.increment
-		}, 50);
+	switchLipSync() {
+		this.lipSyncFlag = !this.lipSyncFlag
+		console.log(this.lipSyncFlag)
 	}
+
 
 
 	/**
@@ -161,20 +149,22 @@ export class LModelAction extends CubismUserModel {
 		}
 
 		if (this._lipsync) {
+			if (this.lipSyncInterval % 4 == 0 && this.lipSyncFlag) {
+				if (this.value < 0) {
+					this.value = 0.0;
+					this.increment *= -1.0
+					this.lipSyncFlag = false
+				} else if (this.value >= 1) {
+					this.value = 1.0;
+					this.increment *= -1.0
+				}
 
-			if (this.value < 0.1) {
-				this.value = 0.0;
-				this.increment *= -1.0
-			} else if (this.value >= 1) {
-				this.value = 1.0;
-				this.increment *= -1.0
+				for (let i = 0; i < model._modelSetting.getLipSyncParameterCount(); ++i) {
+					model._model.setParameterValueById(model._modelSetting.getLipSyncParameterId(i), this.value, 0.8);
+				}
+				this.value += this.increment
 			}
-
-			for (let i = 0; i < model._modelSetting.getLipSyncParameterCount(); ++i) {
-				model._model.setParameterValueById(model._modelSetting.getLipSyncParameterId(i), this.value, this.value);
-			}
-			this.value += this.increment
-			console.log(this.value)
+			this.lipSyncInterval++
 		}
 
 		if (this._pose != null) {

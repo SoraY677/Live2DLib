@@ -246,7 +246,11 @@ export class LModel extends CubismUserModel {
 		this.draw()
 	}
 
-	fireLipSync(text) {
-		this._modelAction.fireLipSync(this._model, text)
+	/**
+	 * リップシンクを制御
+	 */
+	switchLipSync() {
+		this._modelAction.switchLipSync()
 	}
+
 }
