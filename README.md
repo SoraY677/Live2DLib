@@ -1,5 +1,5 @@
-# HackDay2021_Live2DLib
-HackDay2020で使用するLive2Dの簡単導入ライブラリ
+# Live2DLib
+Live2Dの簡単導入ライブラリ
 
 # 要件定義
 
